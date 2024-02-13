@@ -4,6 +4,8 @@ import { autor } from "../models/autores.js";
 class LivroController {
     static async ListarLivros (req, res) {
         try {
+            // Código para usar caso seja implementado a junçã das informações com reference ao inves de Embeding
+            // const listaLivros = await livro.find({}).populate("autor").exec();
             const listalivros = await livro.find({});
             res.status(200).json(listalivros);
         } catch (erro) {
@@ -24,6 +26,8 @@ class LivroController {
     static async AdicionarLivros (req, res) {
         const novoLivro = req.body
         try {
+            // Código para usar caso seja implementado a junção das informações com reference ao inves de Embeding
+            // const livroCriado = await livro.create(req.body);
             const autorEncontrado = await autor.findById(novoLivro.autor)
             const livrocompleto = { ...novoLivro, autor: { ...autorEncontrado._doc }};
             const livroCriado = await livro.create(livrocompleto)
