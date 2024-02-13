@@ -1,18 +1,19 @@
 import express from "express";
+import connectDataBase from "./config/dbConnection.js";
+import livro from "./models/livros.js";
+
+const connection = await connectDataBase();
+
+connection.on("error", (erro) => {
+    console.error("Erro de conexão", erro);
+});
+
+connection.once("open", () => {
+    console.log("Conexão realizada com sucesso")
+})
 
 const app = express();
 app.use(express.json())
-
-const livros = [
-    {
-      id: 1,
-      titulo: "O Senhor dos Anéis"
-    },
-    {
-      id: 2,
-      titulo: "O Hobbit"
-    }
-];
 
 function buscaLivro(id) {
     return livros.findIndex(livro => {
@@ -24,8 +25,9 @@ app.get('/', (req, res) => {
     res.status(200).send('API Livros')
 });
 
-app.get('/livros', (req, res) => {
-    res.status(200).json(livros);
+app.get('/livros', async (req, res) => {
+    const listalivros = await livro.find(); 
+    res.status(200).json(listalivros);
 });
 
 app.get('/livros/:id', (req, res) => {
