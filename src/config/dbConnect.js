@@ -1,6 +1,9 @@
 import mongoose from "mongoose"
+import "dotenv/config";
 
-mongoose.connect("mongodb+srv://alura:123@alura.dkjed.mongodb.net/alura-node");
+const strConnetion = process.env.MONGO_STRING;
+
+mongoose.connect(strConnetion);
 
 let db = mongoose.connection;
 
