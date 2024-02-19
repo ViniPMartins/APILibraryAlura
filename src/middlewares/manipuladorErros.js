@@ -1,17 +1,15 @@
 import mongoose from "mongoose";
-
-// mongoose.Error.ValidationError
+import ErroBase from "../Errors/ErroBase.js"
+import RequisicaoIncorreta from "../Errors/RequisicaoIncorreta.js";
+import ErroValidacao from "../Errors/ErroValidacao.js";
 
 function manipuladorErros (erro, req, res, next) {
     if (erro instanceof mongoose.Error.CastError) {
-        res.status(400).send({message: "Um ou mais dados fornecidos estão incorretos"});
+        new RequisicaoIncorreta().sendResponse(res);
     } else if (erro instanceof mongoose.Error.ValidationError) {
-        const mensagemErro = Object.values(erro.errors)
-                                .map( erro => erro.message)
-                                .join("; ")
-        res.status(400).send({message: `Os seguintes erros foram encontrados: ${mensagemErro}`})
+        new ErroValidacao(erro).sendResponse(res)
     } else {
-        res.status(500).send({message: "Erro interno do servidor"});
+        new ErroBase().sendResponse(res);
     }
 };
 
