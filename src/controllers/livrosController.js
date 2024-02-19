@@ -1,3 +1,4 @@
+import NaoEncontrado from "../Errors/NaoEncontrado.js";
 import livros from "../models/Livro.js";
 
 class LivroController {
@@ -25,8 +26,8 @@ class LivroController {
       if (livroResultados !== null) {
         res.status(200).send(livroResultados);
       } else {
-        res.status(404).send({message: "Id do livro não localizado."});  
-      }
+        next(new NaoEncontrado("Id do livro não localizado"))
+      };
 
     } catch (erro) {
       next(erro);
@@ -49,9 +50,13 @@ class LivroController {
     try {
       const id = req.params.id;
 
-      await livros.findByIdAndUpdate(id, {$set: req.body});
+      const livroResultado = await livros.findByIdAndUpdate(id, {$set: req.body});
 
-      res.status(200).send({message: "Livro atualizado com sucesso"});
+      if (livroResultados !== null) {
+        res.status(200).send(livroResultados);
+      } else {
+        next(new NaoEncontrado("Id do livro não localizado"))
+      };
     } catch (erro) {
       next(erro);
     }
@@ -61,9 +66,13 @@ class LivroController {
     try {
       const id = req.params.id;
 
-      await livros.findByIdAndDelete(id);
+      const livroResultados = await livros.findByIdAndDelete(id);
 
-      res.status(200).send({message: "Livro removido com sucesso"});
+      if (livroResultados !== null) {
+        res.status(200).send(livroResultados);
+      } else {
+        next(new NaoEncontrado("Id do livro não localizado"))
+      };
     } catch (erro) {
       next(erro);
     }
@@ -73,9 +82,13 @@ class LivroController {
     try {
       const editora = req.query.editora;
 
-      const livrosResultado = await livros.find({"editora": editora});
+      const livroResultados = await livros.find({"editora": editora});
 
-      res.status(200).send(livrosResultado);
+      if ((livroResultados !== null) && (livroResultados.length > 0)) {
+        res.status(200).send(livroResultados);
+      } else {
+        next(new NaoEncontrado("Nenhum livro com a editora selecionada localizado"));
+      };
     } catch (erro) {
       next(erro);
     }
