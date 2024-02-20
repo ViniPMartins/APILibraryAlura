@@ -8,9 +8,24 @@ const livroSchema = new mongoose.Schema(
     autor: {type: mongoose.Schema.Types.ObjectId, 
             ref: 'autores', 
             required: [true, "O campo 'autor' é obrigatório."]},
-    editora: {type: String, 
-              required: [true, "O campo 'editora' é obrigatório."]},
-    numeroPaginas: {type: Number}
+    editora: {
+      type: String, 
+      required: [true, "O campo 'editora' é obrigatório."],
+      enum: {
+        values: ["Fantasia", "Classicos"],
+        message: "O valor {VALUE} não é válido como uma editora"
+      }
+    },
+    numeroPaginas: {
+      type: Number,
+      validate: {
+        validator: (valor) => {return valor >= 10 && valor <= 10000},
+        message: "O numero de páginas deve estar entre 10 e 10000. Valor fornecido {VALUE}"
+      }
+    }
+  },
+  {
+    versionKey: false
   }
 );
 
