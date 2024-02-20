@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import ErroBase from "../Errors/ErroBase.js"
-import RequisicaoIncorreta from "../Errors/RequisicaoIncorreta.js";
-import ErroValidacao from "../Errors/ErroValidacao.js";
-import NaoEncontrado from "../Errors/NaoEncontrado.js";
+import ErroBase from "../errors/ErroBase.js"
+import RequisicaoIncorreta from "../errors/RequisicaoIncorreta.js";
+import ErroValidacao from "../errors/ErroValidacao.js";
+import NaoEncontrado from "../errors/NaoEncontrado.js";
 
 function manipuladorErros (erro, req, res, next) {
     if (erro instanceof mongoose.Error.CastError) {
