@@ -1,5 +1,5 @@
 import NaoEncontrado from "../errors/NaoEncontrado.js";
-import livros from "../models/Livro.js";
+import {autores, livros} from "../models/index.js";
 
 class LivroController {
 
@@ -52,8 +52,8 @@ class LivroController {
 
       const livroResultado = await livros.findByIdAndUpdate(id, {$set: req.body});
 
-      if (livroResultados !== null) {
-        res.status(200).send(livroResultados);
+      if (livroResultado !== null) {
+        res.status(200).send(livroResultado);
       } else {
         next(new NaoEncontrado("Id do livro não localizado"))
       };
@@ -78,11 +78,13 @@ class LivroController {
     }
   }
 
-  static listarLivroPorEditora = async (req, res, next) => {
+  static listarLivroPorFiltro = async (req, res, next) => {
     try {
-      const editora = req.query.editora;
+      const filtros = await processaBusca(req.query);
 
-      const livroResultados = await livros.find({"editora": editora});
+      const livroResultados = await livros.find(filtros)
+                                          .populate("autor", "nome")
+                                          .exec();
 
       if ((livroResultados !== null) && (livroResultados.length > 0)) {
         res.status(200).send(livroResultados);
@@ -92,7 +94,37 @@ class LivroController {
     } catch (erro) {
       next(erro);
     }
-  }
+  };
 };
+
+async function processaBusca (parametros) {
+  const { editora, titulo, nomeAutor, minPaginas, maxPaginas } = parametros;
+
+  let filtros = {};
+
+  if (editora) filtros.editora = editora;
+
+  if (minPaginas || maxPaginas) filtros.numeroPaginas = {};
+
+  if(minPaginas) filtros.numeroPaginas.$gte = minPaginas;
+  if(maxPaginas) filtros.numeroPaginas.$lte = maxPaginas;
+  
+  // Utilizando metodo regex do java script
+  // const regxTitulo = new RegExp(titulo, "i")
+  // if (titulo) filtros.titulo = regxTitulo;
+
+  // Utilizando de pesquisa regez pelo mongose
+  if (titulo) filtros.titulo = {$regex: titulo, $options: "i"};
+
+  if (nomeAutor) {
+    const autor = await autores.findOne({"nome":nomeAutor})
+    if (autor !== "") {
+      filtros.autor = autor._id
+    } else {
+      busca = null
+    }
+  }
+  return filtros;
+}
 
 export default LivroController
