@@ -5,11 +5,9 @@ class LivroController {
 
   static listarLivros = async (req, res, next) => {
     try {
-      const livrosResultado = await livros.find()
-        .populate("autor")
-        .exec();
-
-      res.status(200).json(livrosResultado);
+      const livrosResultado = livros.find()
+      req.resultado = livrosResultado
+      next()
     } catch (erro) {
       next(erro);
     }
@@ -82,15 +80,12 @@ class LivroController {
     try {
       const filtros = await processaBusca(req.query);
 
-      const livroResultados = await livros.find(filtros)
-                                          .populate("autor", "nome")
-                                          .exec();
+      const livroResultados = livros.find(filtros)
+                                    //.populate("autor", "nome")
+                                    //.exec();
 
-      if ((livroResultados !== null) && (livroResultados.length > 0)) {
-        res.status(200).send(livroResultados);
-      } else {
-        next(new NaoEncontrado("Nenhum livro com a editora selecionada localizado"));
-      };
+      req.resultado = livroResultados
+      next()
     } catch (erro) {
       next(erro);
     }
