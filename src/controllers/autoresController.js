@@ -1,4 +1,3 @@
-import NaoEncontrado from "../errors/NaoEncontrado.js";
 import { autores } from "../models/index.js";
 
 class AutorController {
@@ -8,6 +7,7 @@ class AutorController {
       const autoresResultado = autores.find();
       req.resultado = autoresResultado
       next()
+      
     } catch (erro) {
       next(erro);
     }
@@ -16,14 +16,9 @@ class AutorController {
   static listarAutorPorId = async (req, res, next) => {
     try {
       const id = req.params.id;
-
       const autorResultado = await autores.findById(id);
-
-      if (autorResultado !== null) {
-        res.status(200).send(autorResultado);
-      } else {
-        next(new NaoEncontrado("Id do autor não localizado"))
-      };
+      req.resultado = autorResultado
+      next()
 
     } catch (erro) {
       next(erro);
@@ -33,10 +28,10 @@ class AutorController {
   static cadastrarAutor = async (req, res, next) => {
     try {
       let autor = new autores(req.body);
-
       const autorResultado = await autor.save();
+      req.resultado = autorResultado !== null ? autorResultado._id : null
+      next()
 
-      res.status(201).send(autorResultado.toJSON());
     } catch (erro) {
       next(erro);
     }
@@ -45,14 +40,10 @@ class AutorController {
   static atualizarAutor = async (req, res, next) => {
     try {
       const id = req.params.id;
-
       const autorResultado = await autores.findByIdAndUpdate(id, {$set: req.body});
+      req.resultado = autorResultado !== null ? autorResultado._id : null
+      next()
 
-      if (autorResultado !== null) {
-        res.status(200).send(autorResultado);
-      } else {
-        next(new NaoEncontrado("Id do autor não localizado"))
-      };
     } catch (erro) {
       next(erro);
     }
@@ -61,14 +52,9 @@ class AutorController {
   static excluirAutor = async (req, res, next) => {
     try {
       const id = req.params.id;
-
       const autorResultado = await autores.findByIdAndDelete(id);
-
-      if (autorResultado !== null) {
-        res.status(200).send(autorResultado);
-      } else {
-        next(new NaoEncontrado("Id do autor não localizado"))
-      };
+      req.resultado = autorResultado !== null ? autorResultado._id : null
+      next()
       
     } catch (erro) {
       next(erro);
