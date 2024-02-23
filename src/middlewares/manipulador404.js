@@ -1,8 +1,8 @@
-import NaoEncontrado from "../errors/NaoEncontrado.js";
+import NaoEncontrado from '../errors/NaoEncontrado.js';
 
-function manipulador404 (req, res, next) {
-    const erro = new NaoEncontrado()
-    next(erro)
+function manipulador404(req, res, next) {
+  const erro = new NaoEncontrado();
+  next(erro);
 }
 
 export default manipulador404;
