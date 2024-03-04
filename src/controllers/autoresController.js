@@ -50,7 +50,7 @@ class AutorController {
     try {
       const { id } = req.params;
       const autorResultado = await autores.findByIdAndDelete(id);
-      req.resultado = autorResultado !== null ? autorResultado._id : null;
+      req.resultado = autorResultado !== null ? autorResultado : null;
       next();
     } catch (erro) {
       next(erro);
