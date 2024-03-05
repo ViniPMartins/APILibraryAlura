@@ -52,6 +52,13 @@ describe('Teste http POST em rota /autores', () => {
 });
 
 describe('Teste HTTP PUT em /autores/id', () => {
+  it('Deve retornar STATUS 400 ao passar um body vazio', async () => {
+    await request(app)
+      .put(`/autores/${autorTesteId}`)
+      .send({})
+      .expect(400);
+  });
+
   test.each([
     ['nome', { nome: 'Novo Teste' }],
     ['nacionalidade', { nacionalidade: 'Novo Teste' }],
@@ -65,7 +72,7 @@ describe('Teste HTTP PUT em /autores/id', () => {
 });
 
 describe('Teste HTTP DELETE em /autores/id', () => {
-  it('Excluir autor teste', async () => {
+  it('Deve excluir autor teste', async () => {
     console.log(`Excluindo autor ${autorTesteId}`);
     await request(app)
       .delete(`/autores/${autorTesteId}`)

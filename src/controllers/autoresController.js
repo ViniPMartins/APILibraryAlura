@@ -1,4 +1,5 @@
 /* eslint-disable no-underscore-dangle */
+import RequisicaoIncorreta from '../errors/RequisicaoIncorreta.js';
 import { autores } from '../models/index.js';
 
 class AutorController {
@@ -37,10 +38,14 @@ class AutorController {
 
   static atualizarAutor = async (req, res, next) => {
     try {
-      const { id } = req.params;
-      const autorResultado = await autores.findByIdAndUpdate(id, { $set: req.body });
-      req.resultado = autorResultado !== null ? autorResultado._id : null;
-      next();
+      if (Object.keys(req.body).length === 0) {
+        next(new RequisicaoIncorreta().sendResponse(res));
+      } else {
+        const { id } = req.params;
+        const autorResultado = await autores.findByIdAndUpdate(id, { $set: req.body });
+        req.resultado = autorResultado !== null ? autorResultado._id : null;
+        next();
+      }
     } catch (erro) {
       next(erro);
     }
