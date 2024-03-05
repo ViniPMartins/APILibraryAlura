@@ -12,6 +12,7 @@ function manipuladorErros(erro, req, res, next) {
   } else if (erro instanceof ErroBase) {
     erro.sendResponse(res);
   } else {
+    console.log(erro);
     new ErroBase().sendResponse(res);
   }
 }
